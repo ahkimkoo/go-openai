@@ -7,12 +7,12 @@ import (
 	"io"
 	"net/http"
 
-	utils "github.com/sashabaranov/go-openai/internal"
+	utils "github.com/ahkimkoo/go-openai/internal"
 )
 
 var (
-	headerData  = []byte("data: ")
-	errorPrefix = []byte(`data: {"error":`)
+	headerData  = []byte("data:")
+	errorPrefix = []byte(`data:{"error":`)
 )
 
 type streamable interface {
@@ -59,6 +59,7 @@ func (stream *streamReader[T]) processLines() (T, error) {
 		}
 
 		noSpaceLine := bytes.TrimSpace(rawLine)
+		noSpaceLine = bytes.Replace(noSpaceLine, []byte("data: "), []byte("data:"), 1)
 		if bytes.HasPrefix(noSpaceLine, errorPrefix) {
 			hasErrorPrefix = true
 		}
